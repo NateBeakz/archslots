@@ -1,0 +1,28 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+NEXT_PUBLIC_SUPABASE_URL=https://kakqgeepcugvwpcygldo.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtha3FnZWVwY3VndndwY3lnbGRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTc1MDksImV4cCI6MjA2NDM3MzUwOX0.xVTmDYqua01kEqS18t14TWwkY6r8noV9ap7RcKnt6Ys
+CRON_SECRET_KEY=archslots_cron_2024_secure

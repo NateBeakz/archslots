@@ -1,0 +1,17 @@
+name: Update Affiliate Stats
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Run every hour
+  workflow_dispatch:      # Allow manual trigger
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Update Stats
+        run: |
+          curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET_KEY }}" \
+          ${{ secrets.APP_URL }}/api/update-stats 
