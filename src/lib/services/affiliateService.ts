@@ -1,4 +1,5 @@
 import { supabase, AffiliateStats } from '../supabase/client';
+import { weeklyLeaderboardService } from './weeklyLeaderboardService';
 
 const AFFILIATE_API_URL = 'https://affiliate.shuffle.com/stats/a3c8d93b-e3b5-47af-8afe-5cfdf13667c7';
 
@@ -61,5 +62,34 @@ export async function getLeaderboard(limit: number = 100): Promise<AffiliateStat
   } catch (error) {
     console.error('Error fetching leaderboard:', error);
     return [];
+  }
+}
+
+/**
+ * Complete update process that includes both affiliate stats and weekly leaderboard
+ */
+export async function updateStatsComplete() {
+  try {
+    console.log('Starting complete stats update...');
+    
+    // 1. Update affiliate stats first
+    const affiliateSuccess = await updateAffiliateStats();
+    if (!affiliateSuccess) {
+      console.error('Failed to update affiliate stats');
+      return false;
+    }
+
+    // 2. Perform hourly weekly leaderboard update
+    const weeklySuccess = await weeklyLeaderboardService.performHourlyUpdate();
+    if (!weeklySuccess) {
+      console.error('Failed to update weekly leaderboard');
+      return false;
+    }
+
+    console.log('Complete stats update successful');
+    return true;
+  } catch (error) {
+    console.error('Error in updateStatsComplete:', error);
+    return false;
   }
 } 

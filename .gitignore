@@ -7,10 +7,26 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+.pnp
+.pnp.js
+
+# Build outputs
 dist
 dist-ssr
 *.local
+build
+out
+
+# Environment files
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Editor directories and files
 .vscode/*
@@ -23,6 +39,14 @@ dist-ssr
 *.sln
 *.sw?
 
-NEXT_PUBLIC_SUPABASE_URL=https://kakqgeepcugvwpcygldo.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtha3FnZWVwY3VndndwY3lnbGRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTc1MDksImV4cCI6MjA2NDM3MzUwOX0.xVTmDYqua01kEqS18t14TWwkY6r8noV9ap7RcKnt6Ys
-CRON_SECRET_KEY=archslots_cron_2024_secure
+# Testing
+coverage
+.nyc_output
+
+# Debug
+.debug
+
+# Cache
+.cache
+.npm
+.eslintcache

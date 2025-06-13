@@ -1,4 +1,4 @@
-import { updateAffiliateStats } from '../lib/services/affiliateService';
+import { updateStatsComplete } from '../lib/services/affiliateService';
 
 export async function POST(req: Request) {
   // Verify the request is from the cron job
@@ -11,14 +11,18 @@ export async function POST(req: Request) {
   }
 
   try {
-    const success = await updateAffiliateStats();
+    const success = await updateStatsComplete();
     if (success) {
-      return new Response(JSON.stringify({ message: 'Stats updated successfully' }), {
+      return new Response(JSON.stringify({ 
+        message: 'Stats and weekly leaderboard updated successfully' 
+      }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
     } else {
-      return new Response(JSON.stringify({ error: 'Failed to update stats' }), {
+      return new Response(JSON.stringify({ 
+        error: 'Failed to update stats and weekly leaderboard' 
+      }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       });
