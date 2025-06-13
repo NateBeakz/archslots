@@ -1,6 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { checkRateLimit } from '../../lib/utils/redisRateLimit';
-import { isFridayUK } from '../../lib/utils/dateUtils';
 
 // Add comprehensive logging
 console.log('Weekly reset module loaded at:', new Date().toISOString());
@@ -22,12 +20,12 @@ const supabaseAdmin = createClient(
   }
 );
 
-export default async function handler(req: Request, res: any) {
+export default async function handler(req: any, res: any) {
   console.log('Weekly reset started at:', new Date().toISOString());
   
   try {
     // Verify cron secret
-    const cronSecret = req.headers.get('x-cron-secret');
+    const cronSecret = req.headers['x-cron-secret'];
     if (cronSecret !== process.env.CRON_SECRET_KEY) {
       console.error('Unauthorized access attempt:', { 
         providedSecret: cronSecret ? 'present' : 'missing',
@@ -37,26 +35,13 @@ export default async function handler(req: Request, res: any) {
     }
 
     // Verify it's Friday (UK time)
-    if (!isFridayUK()) {
-      console.log('Reset attempted on non-Friday:', new Date().toISOString());
+    const now = new Date();
+    const ukTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/London' }));
+    if (ukTime.getDay() !== 5) { // 5 is Friday
+      console.log('Reset attempted on non-Friday:', ukTime.toISOString());
       return res.status(400).json({ 
         error: 'Weekly reset can only be performed on Friday (UK time)',
-        currentTime: new Date().toISOString()
-      });
-    }
-
-    // Get client IP for rate limiting
-    const ip = req.headers.get('x-forwarded-for') || 'unknown';
-    console.log('Request from IP:', ip);
-    
-    // Check rate limit
-    const { allowed, headers: rateLimitHeaders } = await checkRateLimit('cron', ip);
-    
-    if (!allowed) {
-      console.log('Rate limit exceeded for IP:', ip);
-      return res.status(429).json({ 
-        error: 'Too many requests',
-        headers: rateLimitHeaders
+        currentTime: ukTime.toISOString()
       });
     }
 
@@ -90,7 +75,7 @@ export default async function handler(req: Request, res: any) {
     return res.status(200).json({ 
       success: true,
       message: 'Weekly reset completed',
-      timestamp: new Date().toISOString()
+      timestamp: ukTime.toISOString()
     });
 
   } catch (error) {
