@@ -1,43 +1,22 @@
-name: Automated Leaderboard Updates
+name: Leaderboard Automation
 
 on:
   schedule:
-    - cron: '0 * * * *'        # Hourly updates
-    - cron: '0 23 * * 4'       # Thursday 11 PM UTC = Friday midnight UK time
-  workflow_dispatch:           # Manual triggering
+    - cron: '0 * * * *'  # Run hourly
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
-  hourly-update:
-    if: github.event.schedule == '0 * * * *'
+  update-leaderboard:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Hourly Stats Update
+      - name: Hourly Update
         run: |
-          curl -X POST "${{ secrets.VERCEL_APP_URL }}/api/cron/hourly-update" \
-               -H "x-cron-secret: ${{ secrets.CRON_SECRET_KEY }}" \
-               -H "Content-Type: application/json"
+          curl -X POST "https://archslots.vercel.app/api/cron/hourly-update" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET_KEY }}"
+        if: github.event_name == 'schedule'
 
-  weekly-reset:
-    if: github.event.schedule == '0 23 * * 4'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Weekly Leaderboard Reset
+      - name: Weekly Reset
         run: |
-          curl -X POST "${{ secrets.VERCEL_APP_URL }}/api/cron/weekly-reset" \
-               -H "x-cron-secret: ${{ secrets.CRON_SECRET_KEY }}" \
-               -H "Content-Type: application/json"
-
-  manual-trigger:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Manual Hourly Update
-        run: |
-          curl -X POST "${{ secrets.VERCEL_APP_URL }}/api/cron/hourly-update" \
-               -H "x-cron-secret: ${{ secrets.CRON_SECRET_KEY }}" \
-               -H "Content-Type: application/json"
-      - name: Manual Weekly Reset
-        run: |
-          curl -X POST "${{ secrets.VERCEL_APP_URL }}/api/cron/weekly-reset" \
-               -H "x-cron-secret: ${{ secrets.CRON_SECRET_KEY }}" \
-               -H "Content-Type: application/json" 
+          curl -X POST "https://archslots.vercel.app/api/cron/weekly-reset" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET_KEY }}"
+        if: github.event_name == 'workflow_dispatch' 
