@@ -8,10 +8,10 @@ console.log('Environment check:', {
   hasCronSecret: !!process.env.CRON_SECRET_KEY
 });
 
-// Server-side Supabase client with full access
-const supabaseAdmin = createClient(
-  process.env.VITE_SUPABASE_URL || '',
-  process.env.VITE_SUPABASE_ANON_KEY || '',
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.VITE_SUPABASE_URL!,
+  process.env.VITE_SUPABASE_ANON_KEY!,
   {
     auth: {
       autoRefreshToken: false,
@@ -24,6 +24,11 @@ export default async function handler(req: any, res: any) {
   console.log('Weekly reset started at:', new Date().toISOString());
   
   try {
+    // Check environment variables first
+    if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY) {
+      throw new Error('Missing Supabase environment variables');
+    }
+
     // Verify cron secret
     const cronSecret = req.headers['x-cron-secret'];
     if (cronSecret !== process.env.CRON_SECRET_KEY) {
@@ -48,7 +53,7 @@ export default async function handler(req: any, res: any) {
     // Reset weekly leaderboard
     console.log('Starting weekly leaderboard reset...');
     
-    const { error: resetError } = await supabaseAdmin
+    const { error: resetError } = await supabase
       .from('weekly_leaderboard')
       .delete()
       .neq('id', 0); // Delete all records except the dummy record
@@ -61,7 +66,7 @@ export default async function handler(req: any, res: any) {
     // Reset weekly stats
     console.log('Resetting weekly stats...');
     
-    const { error: statsError } = await supabaseAdmin
+    const { error: statsError } = await supabase
       .from('weekly_stats')
       .delete()
       .neq('id', 0);
