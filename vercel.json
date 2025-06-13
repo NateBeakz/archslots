@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/**/*.js": {
+    "api/**/*.ts": {
       "maxDuration": 30
     }
   },
@@ -10,7 +10,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://your-domain.com"
+          "value": "https://archslots.vercel.app"
         },
         {
           "key": "Access-Control-Allow-Methods",
