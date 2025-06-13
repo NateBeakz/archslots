@@ -8,36 +8,26 @@ console.log('Environment check:', {
   hasCronSecret: !!process.env.CRON_SECRET_KEY
 });
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL!,
-  process.env.VITE_SUPABASE_ANON_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-);
-
-export default async function handler(req: any, res: any) {
-  console.log('Weekly reset started at:', new Date().toISOString());
-  
+export default async function handler(req, res) {
   try {
-    // Check environment variables first
-    if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY) {
-      throw new Error('Missing Supabase environment variables');
-    }
-
+    console.log('Weekly reset started');
+    
     // Verify cron secret
     const cronSecret = req.headers['x-cron-secret'];
     if (cronSecret !== process.env.CRON_SECRET_KEY) {
-      console.error('Unauthorized access attempt:', { 
-        providedSecret: cronSecret ? 'present' : 'missing',
-        expectedSecret: process.env.CRON_SECRET_KEY ? 'present' : 'missing'
-      });
+      console.log('Unauthorized access attempt');
       return res.status(401).json({ error: 'Unauthorized' });
     }
+
+    // Initialize Supabase client
+    const supabaseUrl = process.env.VITE_SUPABASE_URL;
+    const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing Supabase environment variables');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Verify it's Friday (UK time)
     const now = new Date();
@@ -87,8 +77,7 @@ export default async function handler(req: any, res: any) {
     console.error('Weekly reset error:', error);
     return res.status(500).json({ 
       error: 'Internal server error',
-      message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
+      message: error.message || 'Unknown error'
     });
   }
 } 
