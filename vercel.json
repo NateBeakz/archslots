@@ -1,6 +1,24 @@
 {
   "functions": {
-    "src/api/**/*.ts": {
+    "src/api/test-cron.ts": {
+      "maxDuration": 30
+    },
+    "src/api/leaderboard.ts": {
+      "maxDuration": 30
+    },
+    "src/api/update-stats.ts": {
+      "maxDuration": 30
+    },
+    "src/api/weekly-leaderboard.ts": {
+      "maxDuration": 30
+    },
+    "src/api/[trpc].ts": {
+      "maxDuration": 30
+    },
+    "src/api/cron/weekly-reset.ts": {
+      "maxDuration": 30
+    },
+    "src/api/cron/hourly-update.ts": {
       "maxDuration": 30
     }
   },
